@@ -53,7 +53,7 @@ const App = () => {
         </div>
 
         <div className="messages">
-          {availableNotes.map((note) => (
+          {availableNotes.length === 0 ? 'Nothing to show' : availableNotes.map((note) => (
             <Message
               key={note.timestamp}
               from={note.from}

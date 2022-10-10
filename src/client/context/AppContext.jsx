@@ -46,6 +46,12 @@ export const AppContextProvider = ({ children }) => {
   };
   const checkForWallet = async () => {
     if (!ethereum) return "Please install meta mask";
+     ethereum.on("chainChanged", () => {
+       window.localStorage.reload();
+     });
+     ethereum.on("accountsChanged", async () => {
+       await connectAccount();
+     });
     try {
       const account = await ethereum.request({
         method: "eth_accounts",
@@ -63,12 +69,7 @@ export const AppContextProvider = ({ children }) => {
     }
   };
   const connectAccount = async () => {
-    ethereum.on("chainChanged", () => {
-      window.localStorage.reload();
-    });
-    ethereum.on("accountsChanged", async () => {
-      await connectAccount();
-    });
+   
 
     if (!ethereum) return "Please install meta mask";
     try {
@@ -110,6 +111,7 @@ export const AppContextProvider = ({ children }) => {
     const contract = getEthContract();
     try {
       let amount = await contract.getTipAmount();
+      if (!message) return alert("Please add a message");
       const addMessage = await contract.tipMe(message, { value: amount });
 
       const count = await contract.getTipCount();

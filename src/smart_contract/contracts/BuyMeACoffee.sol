@@ -37,6 +37,7 @@ contract BuyMeACoffee{
     }
     
     function tipMe( string memory _message ) public payable {
+        require(msg.sender != owner, "You can not tipped yourself");
         require(tipAmount > 0 , "Tip must be greaterthan 0");
         require(msg.value == tipAmount, "An amount must be stated");
 

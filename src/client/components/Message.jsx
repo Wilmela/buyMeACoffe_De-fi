@@ -7,8 +7,8 @@ const Message = ({ from, to, message, amount, timestamp }) => {
       <p className="address">FROM: {shortenAddress(from)}</p>
       <p className="address">TO: {shortenAddress(to)}</p>
       <p className="text">{message}</p>
-      {/* <p className="time">{amount}</p> */}
-      <p className="time">{timestamp}</p>
+      <p className="time">Amount: {amount / 10 ** 18 }ETH</p>
+      <p className="time">Time: {timestamp}</p>
     </div>
   );
 };
