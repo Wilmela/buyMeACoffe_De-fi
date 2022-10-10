@@ -1,8 +1,6 @@
 # Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
+This is a project to demonstrate how to transfer and withdraw ETH. A simple buy me a coffee de-fi.
 
 ```shell
 npx hardhat help
