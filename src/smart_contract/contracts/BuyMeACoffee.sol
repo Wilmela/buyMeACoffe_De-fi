@@ -32,13 +32,9 @@ contract BuyMeACoffee{
         owner = payable(msg.sender);
     }
 
-    function getTipAmount() public view returns (uint){
-        return tipAmount;
-    }
-    
     function tipMe( string memory _message ) public payable {
         require(msg.sender != owner, "You can not tipped yourself");
-        require(tipAmount > 0 , "Tip must be greaterthan 0");
+        require(tipAmount > 0 , "Tip must be greater than 0");
         require(msg.value == tipAmount, "An amount must be stated");
 
         tipCount += 1;
@@ -54,6 +50,10 @@ contract BuyMeACoffee{
 
         payable(owner).transfer(address(this).balance);
 
+    }
+
+    function getTipAmount() public view returns (uint){
+        return tipAmount;
     }
 
     function getAllNotes () public view returns(Note[] memory){

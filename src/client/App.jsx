@@ -1,7 +1,6 @@
-import { useContext } from "react";
 import PF from "../assets/passport.jpg";
 import Message from "./components/Message";
-import { AppContext } from "./context/AppContext";
+import {useAppContext } from "./context/AppContext";
 import { shortenAddress } from "./utils/helper";
 
 const App = () => {
@@ -15,8 +14,11 @@ const App = () => {
     availableNotes,
     withdraw,
     loading,
-  } = useContext(AppContext);
+    balance
+  } = useAppContext();
 
+
+console.log(balance)
   return (
     <section className="container">
     <div className="circle first" />
@@ -49,6 +51,7 @@ const App = () => {
               {!connected ? "Connect Wallet" : "Disconnect Wallet"}
             </button>
             <p className="account">{shortenAddress(currentAccount)}</p>
+            <p className="balance">{balance}</p>
           </form>
         </div>
 

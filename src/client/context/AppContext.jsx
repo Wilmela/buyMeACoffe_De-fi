@@ -1,9 +1,9 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import { ethers } from "ethers";
 import { abi, contractAddress } from "../../smart_contract/contractsData/";
 const { ethereum } = window;
 
-export const AppContext = createContext();
+const AppContext = createContext();
 
 const getEthContract = () => {
   const provider = new ethers.providers.Web3Provider(ethereum);
@@ -19,6 +19,7 @@ export const AppContextProvider = ({ children }) => {
   const [availableNotes, setAvailableNotes] = useState([]);
   const [message, setMessage] = useState("");
   const [count, setCount] = useState(window.localStorage.getItem("tipCount"));
+  const [balance, setBalance] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -44,14 +45,10 @@ export const AppContextProvider = ({ children }) => {
       console.log(error.message);
     }
   };
+
   const checkForWallet = async () => {
     if (!ethereum) return "Please install meta mask";
-     ethereum.on("chainChanged", () => {
-       window.localStorage.reload();
-     });
-     ethereum.on("accountsChanged", async () => {
-       await connectAccount();
-     });
+
     try {
       const account = await ethereum.request({
         method: "eth_accounts",
@@ -68,9 +65,21 @@ export const AppContextProvider = ({ children }) => {
       throw new Error("No ethereum object found");
     }
   };
-  const connectAccount = async () => {
-   
 
+  const onAccountChange = async () => {
+    // ethereum.on("chainChanged", () => {
+    //   window.localStorage.reload();
+    // });
+    ethereum.on("accountsChanged", async () => {
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const account = ethers.utils.getAddress(accounts[0]);
+      setCurrentAccount(account);
+    });
+  };
+
+  const connectAccount = async () => {
     if (!ethereum) return "Please install meta mask";
     try {
       const account = await ethereum.request({
@@ -105,6 +114,14 @@ export const AppContextProvider = ({ children }) => {
     const contract = getEthContract();
     const count = await contract.getTipCount();
     window.localStorage.setItem("tipCount", count);
+  };
+
+  const checkBalance = async () => {
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    let balance = await provider.getBalance(currentAccount);
+    balance = parseInt(balance);
+    balance = balance / (10 ** 18);
+    setBalance(balance);
   };
 
   const buyACoffee = async () => {
@@ -146,6 +163,12 @@ export const AppContextProvider = ({ children }) => {
     checkForWallet();
     checkForCount();
   }, [count]);
+
+  useEffect(() => {
+    onAccountChange();
+    checkBalance();
+  }, [currentAccount]);
+
   return (
     <AppContext.Provider
       value={{
@@ -158,9 +181,11 @@ export const AppContextProvider = ({ children }) => {
         buyACoffee,
         withdraw,
         loading,
+        balance,
       }}
     >
       {children}
     </AppContext.Provider>
   );
 };
+export const useAppContext = () => useContext(AppContext);
